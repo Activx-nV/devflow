@@ -1,7 +1,6 @@
-import { config } from "process";
+import { RequestError } from "../http-errors";
 import logger from "../logger";
 import handleError from "./error";
-import { RequestError } from "../http-errors";
 
 interface FetchOptions extends RequestInit {
   timeout?: number;
@@ -22,7 +21,6 @@ export async function fetchHandler<T>(
   } = options;
 
   const controller = new AbortController();
-
   const id = setTimeout(() => controller.abort(), timeout);
 
   const defaultHeaders: HeadersInit = {
@@ -53,7 +51,7 @@ export async function fetchHandler<T>(
     if (error.name === "AbortError") {
       logger.warn(`Request to ${url} timed out`);
     } else {
-      logger.error(`Error fetching ${url}: ${error.message} `);
+      logger.error(`Error fetching ${url}: ${error.message}`);
     }
 
     return handleError(error) as ActionResponse<T>;

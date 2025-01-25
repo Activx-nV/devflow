@@ -4,11 +4,12 @@ export const SignInSchema = z.object({
   email: z
     .string()
     .min(1, { message: "Email is required" })
-    .email({ message: "Please provide a valid email address" }),
+    .email({ message: "Please provide a valid email address." }),
+
   password: z
     .string()
     .min(6, { message: "Password must be at least 6 characters long. " })
-    .max(100, { message: "Password cannot exceed 100 characters. " }),
+    .max(100, { message: "Password cannot exceed 100 characters." }),
 });
 
 export const SignUpSchema = z.object({
@@ -54,7 +55,8 @@ export const AskQuestionSchema = z.object({
     .string()
     .min(5, { message: "Title is required." })
     .max(100, { message: "Title cannot exceed 100 characters." }),
-  content: z.string().min(1, { message: "Content is required." }),
+
+  content: z.string().min(1, { message: "Body is required." }),
   tags: z
     .array(
       z
@@ -63,7 +65,7 @@ export const AskQuestionSchema = z.object({
         .max(30, { message: "Tag cannot exceed 30 characters." })
     )
     .min(1, { message: "At least one tag is required." })
-    .max(3, { message: "Cannot add more the 3 tags." }),
+    .max(3, { message: "Cannot add more than 3 tags." }),
 });
 
 export const UserSchema = z.object({
@@ -105,4 +107,21 @@ export const AccountSchema = z.object({
   providerAccountId: z
     .string()
     .min(1, { message: "Provider Account ID is required." }),
+});
+
+export const SignInWithOAuthSchema = z.object({
+  provider: z.enum(["google", "github"]),
+  providerAccountId: z
+    .string()
+    .min(1, { message: "Provider Account ID is required." }),
+  user: z.object({
+    name: z.string().min(1, { message: "Name is required." }),
+    username: z
+      .string()
+      .min(3, { message: "Username must be at least 3 characters long." }),
+    email: z
+      .string()
+      .email({ message: "Please provide a valid email address." }),
+    image: z.string().url("Invalid image URL").optional(),
+  }),
 });
