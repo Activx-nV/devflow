@@ -4,7 +4,6 @@ import Theme from "./Theme";
 import MobileNavigation from "./MobileNavigation";
 import { auth } from "@/auth";
 import UserAvatar from "@/components/UserAvatar";
-import UserAvatar from "@/components/UserAvatar";
 
 const Navbar = async () => {
   const session = await auth();
