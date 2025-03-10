@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { after } from "next/server";
+import { unstable_after } from "next/server";
 import React from "react";
 
 import TagCard from "@/components/cards/TagCard";
@@ -9,15 +9,15 @@ import AnswerForm from "@/components/forms/AnswerForm";
 import Metric from "@/components/Metric";
 import UserAvatar from "@/components/UserAvatar";
 import ROUTES from "@/constants/routes";
-import { getAnswers } from "@/lib/actions/answer.action";
 import { getQuestion, incrementViews } from "@/lib/actions/question.action";
 import { formatNumber, getTimeStamp } from "@/lib/utils";
+import { getAnswers } from "@/lib/actions/answer.actions";
 
 const QuestionDetails = async ({ params }: RouteParams) => {
   const { id } = await params;
   const { success, data: question } = await getQuestion({ questionId: id });
 
-  after(async () => {
+  unstable_after(async () => {
     await incrementViews({ questionId: id });
   });
 
