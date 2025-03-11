@@ -61,4 +61,5 @@ export const api = {
     delete: (id: string) =>
       fetchHandler(`${API_BASE_URL}/accounts/${id}`, { method: "DELETE" }),
   },
+  ai: 
 };
