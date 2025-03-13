@@ -1,26 +1,28 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { unstable_after } from "next/server";
+import { after } from "next/server";
 import React, { Suspense } from "react";
 
+import AllAnswers from "@/components/answers/AllAnswers";
 import TagCard from "@/components/cards/TagCard";
 import { Preview } from "@/components/editor/Preview";
 import AnswerForm from "@/components/forms/AnswerForm";
 import Metric from "@/components/Metric";
+import SaveQuestion from "@/components/questions/SaveQuestion";
 import UserAvatar from "@/components/UserAvatar";
+import Votes from "@/components/votes/Votes";
 import ROUTES from "@/constants/routes";
+import { hasSavedQuestion } from "@/lib/actions/collection.action";
 import { getQuestion, incrementViews } from "@/lib/actions/question.action";
+import { hasVoted } from "@/lib/actions/vote.action";
 import { formatNumber, getTimeStamp } from "@/lib/utils";
 import { getAnswers } from "@/lib/actions/answer.actions";
-import AllAnswers from "@/components/answers/AllAnswers";
-import Votes from "@/components/votes/Votes";
-import { hasVoted } from "@/lib/actions/vote.action";
 
 const QuestionDetails = async ({ params }: RouteParams) => {
   const { id } = await params;
   const { success, data: question } = await getQuestion({ questionId: id });
 
-  unstable_after(async () => {
+  after(async () => {
     await incrementViews({ questionId: id });
   });
 
@@ -40,6 +42,10 @@ const QuestionDetails = async ({ params }: RouteParams) => {
   const hasVotedPromise = hasVoted({
     targetId: question._id,
     targetType: "question",
+  });
+
+  const hasSavedQuestionPromise = hasSavedQuestion({
+    questionId: question._id,
   });
 
   const { author, createdAt, answers, views, tags, content, title } = question;
@@ -62,14 +68,21 @@ const QuestionDetails = async ({ params }: RouteParams) => {
             </Link>
           </div>
 
-          <div className="flex justify-end">
+          <div className="flex items-center justify-end gap-4">
             <Suspense fallback={<div>Loading...</div>}>
               <Votes
+                targetType="question"
                 upvotes={question.upvotes}
                 downvotes={question.downvotes}
-                targetType="question"
                 targetId={question._id}
                 hasVotedPromise={hasVotedPromise}
+              />
+            </Suspense>
+
+            <Suspense fallback={<div>Loading...</div>}>
+              <SaveQuestion
+                questionId={question._id}
+                hasSavedQuestionPromise={hasSavedQuestionPromise}
               />
             </Suspense>
           </div>
