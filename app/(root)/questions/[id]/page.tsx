@@ -16,7 +16,7 @@ import { hasSavedQuestion } from "@/lib/actions/collection.action";
 import { getQuestion, incrementViews } from "@/lib/actions/question.action";
 import { hasVoted } from "@/lib/actions/vote.action";
 import { formatNumber, getTimeStamp } from "@/lib/utils";
-import { getAnswers } from "@/lib/actions/answer.actions";
+import { getAnswers } from "@/lib/actions/answer.action";
 
 const QuestionDetails = async ({ params, searchParams }: RouteParams) => {
   const { id } = await params;
@@ -35,7 +35,7 @@ const QuestionDetails = async ({ params, searchParams }: RouteParams) => {
     error: answersError,
   } = await getAnswers({
     questionId: id,
-    page: Number(page),
+    page: Number(page) || 1,
     pageSize: Number(pageSize) || 10,
     filter,
   });
@@ -133,6 +133,8 @@ const QuestionDetails = async ({ params, searchParams }: RouteParams) => {
 
       <section className="my-5">
         <AllAnswers
+          page={Number(page) || 1}
+          isNext={answersResult?.isNext || false}
           data={answersResult?.answers}
           success={areAnswersLoaded}
           error={answersError}
